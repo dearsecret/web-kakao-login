@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>NEW PAGE</title>
+  <style>
+    /* body { display:flex; height:100vh; justify-content:center; align-items:center; flex-direction:column; background:#121212; color:#fff; font-family:Arial; }
+    #message { margin-top:1rem; }
+    #error { color: #ff5c5c; font-weight: bold; } */
+  </style>
+</head>
+<body>
+  <!-- <h1>NEW PAGE</h1>
+  <p id="message">잠시만 기다려 주세요.</p> -->
+
+  <script>
+    // refresh_url , login_url 알려줘야함.
+    async function fetchWithAuth(options = {}) {
+        const currentUrl = window.location.href;
+        const method = (options.method || 'GET').toUpperCase();
+        const csrfToken = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+        options.credentials = 'include';
+
+        if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(method)) {
+            options.headers = {
+                ...options.headers,
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            };
+        }
+
+        let response = await fetch(currentUrl, options);
+
+        if (response.status === 401) {
+            const refreshResponse = await fetch("{{ refresh_url|escapejs }}", {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (refreshResponse.ok) {
+                response = await fetch(currentUrl, options);
+            } else {
+                console.log('Refresh token expired or invalid. 로그아웃 처리');
+                const redirectUrl = encodeURIComponent(currentUrl);
+                window.location.href = `{{ login_url }}?redirect=${redirectUrl}`;
+                throw new Error('로그인이 필요합니다.');
+            }
+        }
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText);
+        }
+
+        return response.json();
+    }
+
+  </script>
+</body>
+</html>
+

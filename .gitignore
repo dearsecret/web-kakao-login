@@ -1,0 +1,18 @@
+# 가상환경 디렉터리
+venv/
+.env.*
+
+# Python 관련 일반 무시 항목
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# IDE 관련 (VSCode, PyCharm 등)
+.vscode/
+.idea/
+
+# 기타
+*.log
+.DS_Store

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>카카오 로그인</title>
+  <style>
+    body {
+      display: flex; height: 100vh; justify-content: center; align-items: center;
+      background: #121212; color: #fff; font-family: Arial;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    {% if is_logged_in %}
+      <h1>이미 로그인되어 있습니다.</h1>
+    {% else %}
+      <h1>카카오 로그인으로 이동합니다...</h1>
+      <script>
+        window.location.href = "{{ kakao_auth_url }}";
+      </script>
+    {% endif %}
+  </div>
+</body>
+</html>
